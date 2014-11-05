@@ -17,7 +17,7 @@ public class SlotLabels extends GridPanel {
         }
         for (int row = 1; row <= rows; row++) {
             for (char ch = 'A'; ch < 'A' + cols; ch++) {
-                SlotLabel label = new SlotLabel();
+                SlotLabel label = new SlotLabel("" + ch + row);
                 add(label);
                 labelList.add(label);
             }
