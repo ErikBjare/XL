@@ -1,40 +1,21 @@
 package models;
 
-import expr.Expr;
+import expr.Environment;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+public abstract class Cell {
+    public Sheet sheet;
+    public String address;
 
-public class Cell {
-	public Sheet sheet;
-	public String address;
-	public Expr expr;
-	
-	public Cell(Sheet sheet, String address) {
-		this.sheet = sheet;
-		this.address = address;
-	}
+    public Cell(Sheet sheet, String address) {
+        this.sheet = sheet;
+        this.address = address;
+    }
 
-	public void listenToVars(Sheet sheet) {
-		variables();
-	}
+    public abstract double value(Environment env);
+    public abstract String toString();
 
-	public List<String> variables() {
-		List<String> vars = new ArrayList<String>();
-
-		Pattern p = Pattern.compile("[A-Z]+[1-9][0-9]*");
-		Matcher m = p.matcher(expr.toString());
-		while(m.find()) {
-			vars.add(m.group());
-		}
-
-		return vars;
-	}
-	
-	public void change() {
-		// TODO: Do this every time it is changed
-		this.sheet.clear(this);
-	}
+    public void change() {
+        // TODO: Do this every time it is changed
+        this.sheet.clear(this);
+    }
 }
