@@ -11,8 +11,9 @@ import java.util.regex.Pattern;
 public class ExprCell extends Cell {
 	public Expr expr;
 	
-	public ExprCell(Sheet sheet, String address) {
+	public ExprCell(Sheet sheet, String address, Expr expr) {
 		super(sheet, address);
+		this.expr = expr;
 	}
 
 	public double value(Environment env) {

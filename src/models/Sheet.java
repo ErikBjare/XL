@@ -6,11 +6,14 @@ import java.util.HashMap;
 import java.util.Observable;
 
 public class Sheet extends Observable implements Environment {
-	public HashMap<String, ExprCell> cells;
+	public HashMap<String, Cell> cells;
 	
-	public ExprCell get(String address) {
+	public Cell get(String address) {
 		if (!cells.containsKey(address)) {
-			ExprCell cell = new ExprCell(this, address);
+			// TODO: What should be done in this case?
+			// Zero expr would be preferred but not possible due to Num not being exported.
+			// EmptyCell is a temporary (or is it?) fix.
+			Cell cell = new EmptyCell(this, address);
 			cells.put(address, cell);
 			return cell;
 		} else {
