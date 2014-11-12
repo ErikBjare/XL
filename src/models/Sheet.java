@@ -4,9 +4,12 @@ import expr.Environment;
 import expr.ExprParser;
 import util.XLException;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class Sheet extends Observable implements Environment {
 	public HashMap<String, Slot> cells;
@@ -38,5 +41,39 @@ public class Sheet extends Observable implements Environment {
 	@Override
 	public double value(String name) {
 		return get(name).value(this);
+	}
+}
+
+class XLPrintStream extends PrintStream {
+	public XLPrintStream(String fileName) throws FileNotFoundException {
+		super(fileName);
+	}
+
+	public void save(Set<Entry<String, Slot>> set) {
+		for (Entry<String, Slot> entry : set) {
+			print(entry.getKey());
+			print('=');
+			println(entry.getValue().toString());
+		}
+		flush();
+		close();
+	}
+}
+
+class XLBufferedReader extends BufferedReader {
+	public XLBufferedReader(String name) throws FileNotFoundException {
+		super(new FileReader(name));
+	}
+
+	public void load(Map<String, Slot> map) {
+		try {
+			while (ready()) {
+				String string = readLine();
+				int i = string.indexOf('=');
+				// TODO
+			}
+		} catch (Exception e) {
+			throw new XLException(e.getMessage());
+		}
 	}
 }
