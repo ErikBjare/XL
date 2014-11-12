@@ -1,6 +1,5 @@
 package models;
 
-import expr.Environment;
 import expr.Expr;
 
 import java.util.ArrayList;
@@ -8,16 +7,19 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ExprCell extends Cell {
+public class ExprSlot extends Slot {
 	public Expr expr;
 	
-	public ExprCell(Sheet sheet, String address, Expr expr) {
+	public ExprSlot(Sheet sheet, String address, Expr expr) {
 		super(sheet, address);
 		this.expr = expr;
 	}
 
-	public double value(Environment env) {
-		return expr.value(env);
+	public double value(Sheet sheet) {
+		sheet.put(address, new BombSlot(sheet, address));
+		double val = expr.value(sheet);
+		sheet.put(address, this);
+		return val;
 	}
 
 	@Override
@@ -26,7 +28,16 @@ public class ExprCell extends Cell {
 	}
 
 	public void listenToVars(Sheet sheet) {
-		variables();
+		for(String var : variables()) {
+			sheet.get(var).addObserver(this);
+		};
+	}
+
+	@Override
+	public void change() {
+		for (String var : variables()) {
+			sheet.get(var).deleteObserver(this);
+		}
 	}
 
 	public List<String> variables() {

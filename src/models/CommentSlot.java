@@ -1,18 +1,17 @@
 package models;
 
-import expr.Environment;
 import util.XLException;
 
-public class CommentCell extends Cell {
+public class CommentSlot extends Slot {
     public String comment;
 
-    public CommentCell(Sheet sheet, String address, String comment) {
+    public CommentSlot(Sheet sheet, String address, String comment) {
         super(sheet, address);
         this.comment = comment;
     }
 
     @Override
-    public double value(Environment env) {
+    public double value(Sheet sheet) {
         // TODO: Correct exception? Correct msg?
         throw new XLException("TODO");
     }

@@ -1,28 +1,38 @@
 package models;
 
 import expr.Environment;
+import expr.ExprParser;
+import util.XLException;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Observable;
 
 public class Sheet extends Observable implements Environment {
-	public HashMap<String, Cell> cells;
+	public HashMap<String, Slot> cells;
 	
-	public Cell get(String address) {
+	public Slot get(String address) {
 		if (!cells.containsKey(address)) {
-			// TODO: What should be done in this case?
-			// Zero expr would be preferred but not possible due to Num not being exported.
-			// EmptyCell is a temporary (or is it?) fix.
-			Cell cell = new EmptyCell(this, address);
-			cells.put(address, cell);
-			return cell;
+			ExprParser ep = new ExprParser();
+			try {
+				Slot slot = new ExprSlot(this, address, ep.build("0"));
+				cells.put(address, slot);
+				return slot;
+			} catch (IOException e) {
+				throw new XLException("This should never happen");
+			}
 		} else {
 			return cells.get(address);	
 		}
 	}
+
+	public void put(String address, Slot slot) {
+		cells.put(address, slot);
+	}
 	
-	public void clear(Cell cell) {
-		cells.remove(cell.address);
+	public void clear(Slot slot) {
+		// TODO: Use when a slot is empty or when to be changed
+		cells.remove(slot.address);
 	}
 
 	@Override
