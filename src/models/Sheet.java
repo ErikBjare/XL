@@ -1,41 +1,47 @@
 package models;
 
 import expr.Environment;
-import expr.ExprParser;
 import util.XLException;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Observable;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class Sheet extends Observable implements Environment {
-	public HashMap<String, Slot> cells;
-	
+	private Map<String, Slot> slots;
+
+	public Sheet() {
+		slots = new HashMap<String, Slot>();
+	}
+
 	public Slot get(String address) {
-		if (!cells.containsKey(address)) {
-			ExprParser ep = new ExprParser();
-			try {
-				Slot slot = new ExprSlot(this, address, ep.build("0"));
-				cells.put(address, slot);
-				return slot;
-			} catch (IOException e) {
-				throw new XLException("This should never happen");
-			}
+		if (!slots.containsKey(address)) {
+			return null;
 		} else {
-			return cells.get(address);	
+			return slots.get(address);
 		}
 	}
 
 	public void put(String address, Slot slot) {
-		cells.put(address, slot);
+		slots.put(address, slot);
+		setChanged();
+		notifyObservers();
 	}
 	
 	public void clear(Slot slot) {
 		// TODO: Use when a slot is empty or when to be changed
-		cells.remove(slot.address);
+
+		if(slot!= null){
+			slots.remove(slot.getAddress());
+			setChanged();
+			notifyObservers();
+
+
+		}
+	}
+
+	public Set<Entry<String, Slot>> getSlots() {
+		return slots.entrySet();
 	}
 
 	@Override
