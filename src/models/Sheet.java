@@ -28,13 +28,15 @@ public class Sheet extends Observable implements Environment {
 		notifyObservers();
 	}
 	
-	public void clear(Slot slot) {
+	public void clear(String address) {
 		// TODO: Use when a slot is empty or when to be changed
 
-		if(slot!= null){
-			slots.remove(slot.getAddress());
+		if(get(address) != null){
+			put(address, new CommentSlot(this, address, ""));
+
 			setChanged();
 			notifyObservers();
+			slots.remove(address);
 
 
 		}
