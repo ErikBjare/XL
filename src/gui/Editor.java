@@ -6,6 +6,7 @@ import models.CommentSlot;
 import models.ExprSlot;
 import models.Sheet;
 import models.Slot;
+import util.XLException;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -13,15 +14,17 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 public class Editor extends JTextField implements Observer {
     private CurrentSlot currentSlot;
     private Sheet sheet;
+    private StatusLabel statusLabel;
 
-    public Editor(final Sheet sheet, final CurrentSlot currentSlot) {
+    public Editor(final Sheet sheet, final CurrentSlot currentSlot, final StatusLabel statusLabel) {
         this.currentSlot = currentSlot;
         this.sheet = sheet;
+        this.statusLabel = statusLabel;
         currentSlot.addObserver(this);
 
         setBackground(Color.WHITE);
@@ -35,26 +38,45 @@ public class Editor extends JTextField implements Observer {
                     // If Expression
                     // TODO: Create a exprslot
 
+                    Slot oldslot = sheet.get(currentSlot.getAddress());
+
                     try {
                         Expr expr = new ExprParser().build(text);
                         slot = new ExprSlot(sheet, currentSlot.getAddress(), expr);
+                        sheet.put(currentSlot.getAddress(), slot);
                     } catch (IOException err) {
                         // TODO: Do something with error
-                        System.err.println("IOERROR");
+                        statusLabel.setText("Invalid Expression.");
                         return;
-                    }
-                    sheet.put(currentSlot.getAddress(), slot);
+                    } catch (XLException err) {
+                        try{
+                            sheet.put(currentSlot.getAddress(), oldslot);
+                        }catch (NullPointerException f){
+                            statusLabel.setText("An empty slot may not be referenced to.");
+                        }catch (XLException f){
+                            statusLabel.setText(f.getMessage());
+                        }
 
-                    } else if (text.charAt(0) == '#' && text.length() > 1){
+                        if(err == XLException.NULLSLOT_ERROR) {
+                            // TODO: Send error message to statuslabel
+                            statusLabel.setText("An empty slot may not be referenced to.");
+                        } else if(err == XLException.RECURSION_ERROR) {
+                            // TODO: Send error message to statuslabel
+                            statusLabel.setText("Recursive expressions are not allowed.");
+                        } else {
+                            throw err;
+                        }
+                    }catch (NullPointerException f){
+                        statusLabel.setText("An empty slot may not be referenced to.");
+                    }
+                } else if (text.length() > 1 && text.charAt(0) == '#') {
                     // If Comment
                     slot = new CommentSlot(sheet, currentSlot.getAddress(), text.substring(1, text.length()));
                     System.out.println(text.substring(1, text.length()));
+
                     sheet.put(currentSlot.getAddress(), slot);
-                    } else {
-
+                } else {
                     sheet.clear(currentSlot.getAddress());
-
-
                 }
             }
         });
