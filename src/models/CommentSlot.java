@@ -1,7 +1,5 @@
 package models;
 
-import util.XLException;
-
 public class CommentSlot extends Slot {
     public String comment;
 
@@ -12,12 +10,14 @@ public class CommentSlot extends Slot {
 
     @Override
     public double value(Sheet sheet) {
-        // TODO: Correct exception? Correct msg?
-        throw new XLException("TODO");
+        return 0;
     }
 
     @Override
     public String toString() {
         return comment;
+    }
+    public String getText(){
+        return '#'+comment;
     }
 }

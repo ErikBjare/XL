@@ -55,28 +55,25 @@ public class Editor extends JTextField implements Observer {
                             statusLabel.setText("An empty slot may not be referenced to.");
                         }catch (XLException f){
                             statusLabel.setText(f.getMessage());
-                        }
+                        } statusLabel.setText(err.getMessage());
 
-                        if(err == XLException.NULLSLOT_ERROR) {
-                            // TODO: Send error message to statuslabel
-                            statusLabel.setText("An empty slot may not be referenced to.");
-                        } else if(err == XLException.RECURSION_ERROR) {
-                            // TODO: Send error message to statuslabel
-                            statusLabel.setText("Recursive expressions are not allowed.");
-                        } else {
-                            throw err;
-                        }
+
                     }catch (NullPointerException f){
                         statusLabel.setText("An empty slot may not be referenced to.");
                     }
                 } else if (text.length() > 1 && text.charAt(0) == '#') {
                     // If Comment
                     slot = new CommentSlot(sheet, currentSlot.getAddress(), text.substring(1, text.length()));
-                    System.out.println(text.substring(1, text.length()));
+//
 
                     sheet.put(currentSlot.getAddress(), slot);
                 } else {
-                    sheet.clear(currentSlot.getAddress());
+                    try{
+                        sheet.clear(currentSlot.getAddress());
+                    }catch (XLException f){
+                        statusLabel.setText(f.getMessage());
+
+                    }
                 }
             }
         });
@@ -90,7 +87,7 @@ public class Editor extends JTextField implements Observer {
                 setText(slot.getText());
 
         } else {
-            System.out.println("Empty Slot ");
+//            System.out.println("Empty Slot ");
             setText("");
         }
     }

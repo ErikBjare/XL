@@ -14,10 +14,10 @@ public class SlotLabel extends ColoredLabel {
         this.slotlabels = sl;
         addMouseListener(new MouseA());
     }
+
     
     class MouseA extends MouseAdapter {    	
     	public void mousePressed(MouseEvent e){
-    		System.out.println("Clicked: " + address + "!");
 			slotlabels.getCurrent().setAddress(address);
 		}	
     }

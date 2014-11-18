@@ -1,6 +1,7 @@
 package models;
 
 import expr.Expr;
+import util.XLException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +17,15 @@ public class ExprSlot extends Slot {
 	}
 
 	public double value(Sheet sheet) {
-		sheet.put(address, new BombSlot(sheet, address));
-		double val = expr.value(sheet);
-		sheet.put(address, this);
+		sheet.putWithoutUpdate(address, new BombSlot(sheet, address));
+		double val;
+		try {
+			val = expr.value(sheet);
+		} catch(XLException err) {
+			sheet.putWithoutUpdate(address, this);
+			throw err;
+		}
+		sheet.putWithoutUpdate(address, this);
 		return val;
 	}
 
@@ -27,9 +34,25 @@ public class ExprSlot extends Slot {
 		return expr.toString();
 	}
 
-	public void listenToVars(Sheet sheet) {
+	@Override
+	public String getText()  {
+		return expr.toString();
+	}
+
+	public void startObserving() {
 		for(String var : variables()) {
-			sheet.get(var).addObserver(this);
+			Slot slot = sheet.get(var);
+			if(slot == null) {
+				throw XLException.NULLSLOT_ERROR;
+			} else {
+				slot.addObserver(this);
+			}
+		};
+	}
+	
+	public void stopObserving() {
+		for(String var : variables()) {
+			sheet.get(var).deleteObserver(this);
 		};
 	}
 

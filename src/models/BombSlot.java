@@ -9,11 +9,16 @@ public class BombSlot extends Slot {
 
     @Override
     public double value(Sheet sheet) {
-        throw new XLException("BOOM");
+        throw XLException.RECURSION_ERROR;
     }
 
     @Override
     public String toString() {
+        return "";
+    }
+
+    @Override
+    public String getText() {
         return "";
     }
 }
