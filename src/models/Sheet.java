@@ -23,7 +23,7 @@ public class Sheet extends Observable implements Environment {
     }
 
     public void externallyChanged() {
-        for(Slot slot : slots.values()) {
+        for (Slot slot : slots.values()) {
             if (slot instanceof ExprSlot) {
                 ((ExprSlot) slot).startObserving();
             }
@@ -31,16 +31,26 @@ public class Sheet extends Observable implements Environment {
         setChanged();
         notifyObservers();
     }
+    public void updateObservers(){
+        for (Map.Entry<String, Slot> entry : slots.entrySet()) {
+            Slot s =entry.getValue();
+            if(s instanceof ExprSlot) {
+                ((ExprSlot)s).startObserving();
+            }
+        }
+    }
 
-    public void clearAll(){
+    public void clearAll() {
         slots = new HashMap<String, Slot>();
         setChanged();
         notifyObservers();
     }
 
     public void put(String address, Slot slot) {
+
         putWithoutUpdate(address, slot);
-        if(slot instanceof ExprSlot) {
+        updateObservers();
+        if (slot instanceof ExprSlot) {
             ((ExprSlot) slot).startObserving();
         }
         setChanged();
@@ -58,7 +68,7 @@ public class Sheet extends Observable implements Environment {
             put(address, new CommentSlot(this, address, ""));
             setChanged();
             notifyObservers();
-            if(slot instanceof ExprSlot) {
+            if (slot instanceof ExprSlot) {
                 ((ExprSlot) slot).stopObserving();
             }
             slots.remove(address);
