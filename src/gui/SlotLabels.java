@@ -99,10 +99,11 @@ public class SlotLabels extends GridPanel implements Observer {
                     s.setText(e.getValue().toString());
                 } else {
                     try{
-                        s.setText(Double.toString(e.getValue().value(sheet)));
+                        String textValue = Double.toString(e.getValue().value(sheet));
+                        s.setText(textValue);
                     } catch (NullPointerException x) {
                         System.out.println("Referring to a slot that contains nothing");
-                        s.setText(e.getValue().toString());
+//                        s.setText(e.getValue().toString());
                     }
                 }
             }

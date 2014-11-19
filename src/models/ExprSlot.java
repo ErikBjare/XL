@@ -21,6 +21,7 @@ public class ExprSlot extends Slot {
 		double val;
 		try {
 			val = expr.value(sheet);
+
 		} catch(XLException err) {
 			sheet.putWithoutUpdate(address, this);
 			throw err;
@@ -28,7 +29,9 @@ public class ExprSlot extends Slot {
 		sheet.putWithoutUpdate(address, this);
 		return val;
 	}
-
+	public void setExpr(Expr expr){
+		this.expr = expr;
+	}
 	@Override
 	public String toString() {
 		return expr.toString();
@@ -49,7 +52,7 @@ public class ExprSlot extends Slot {
 			}
 		}
 	}
-	
+
 	public void stopObserving() {
 		for(String var : variables()) {
 			sheet.get(var).deleteObserver(this);

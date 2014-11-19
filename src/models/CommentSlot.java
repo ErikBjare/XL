@@ -17,6 +17,7 @@ public class CommentSlot extends Slot {
     public String toString() {
         return comment;
     }
+
     public String getText(){
         return '#'+comment;
     }
