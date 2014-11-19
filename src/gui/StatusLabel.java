@@ -4,19 +4,15 @@ import javax.swing.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Observable;
-import java.util.Observer;
 
-public class StatusLabel extends ColoredLabel implements Observer {
+
+public class StatusLabel extends ColoredLabel {
     Timer timer;
 
     public StatusLabel() {
         super("", Color.WHITE);
     }
 
-    public void update(Observable observable, Object object) {
-        setText("");
-    }
 
     @Override
     public void setText(String text) {
@@ -42,5 +38,5 @@ class ResetAction implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         label.setText("");
     }
-};
+}
 }

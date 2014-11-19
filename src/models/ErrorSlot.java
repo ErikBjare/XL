@@ -2,8 +2,8 @@ package models;
 
 import util.XLException;
 
-public class BombSlot extends Slot {
-    public BombSlot(Sheet sheet, String address) {
+public class ErrorSlot extends Slot {
+    public ErrorSlot(Sheet sheet, String address) {
         super(sheet, address);
     }
 

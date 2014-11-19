@@ -31,7 +31,6 @@ public class SlotLabels extends GridPanel implements Observer {
             String s = String.valueOf(c);
             int preidx = i/('Z'-'A'+1);
             if(preidx > 0) {
-                System.out.println(preidx-1);
                 s = (char)('A'+preidx-1) + s;
             }
             colStrings.add(s);
@@ -69,10 +68,10 @@ public class SlotLabels extends GridPanel implements Observer {
     }
 
     public void setBG(String addr) {
-        // NOTE: Only supports [A-Z][1-9][0-9]*
+
         labelList.get(lastIdx).setBackground(Color.WHITE);
         int i = addrToIdx(addr);
-//        System.out.println("Setting i=" + i + " to yellow bg");
+
         labelList.get(i).setBackground(Color.YELLOW);
         lastIdx = i;
     }
@@ -92,7 +91,7 @@ public class SlotLabels extends GridPanel implements Observer {
             }
             for (Map.Entry<String, Slot> e : sheet.getSlots().entrySet()) {
                 Slot value = e.getValue();
-                System.out.println(e.getKey()+ " gives value " +value);
+
                 if(value!= null){
                 SlotLabel s = labelList.get(addrToIdx(value.getAddress()));
                              if (e.getValue() instanceof CommentSlot) {
@@ -102,8 +101,7 @@ public class SlotLabels extends GridPanel implements Observer {
                         String textValue = Double.toString(e.getValue().value(sheet));
                         s.setText(textValue);
                     } catch (NullPointerException x) {
-                        System.out.println("Referring to a slot that contains nothing");
-//                        s.setText(e.getValue().toString());
+                        //NOTE: Should not happen (?)
                     }
                 }
             }

@@ -17,7 +17,7 @@ public class ExprSlot extends Slot {
 	}
 
 	public double value(Sheet sheet) {
-		sheet.putWithoutUpdate(address, new BombSlot(sheet, address));
+		sheet.putWithoutUpdate(address, new ErrorSlot(sheet, address));
 		double val;
 		try {
 			val = expr.value(sheet);

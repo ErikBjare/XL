@@ -79,8 +79,7 @@ public class Editor extends JTextField implements Observer {
             setText(slot.getText());
 
         } else {
-//            System.out.println("Empty Slot ");
-            setText("");
+             setText("");
         }
     }
 }
