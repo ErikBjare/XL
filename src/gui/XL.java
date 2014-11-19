@@ -13,11 +13,12 @@ import java.awt.print.Printable;
 import javax.swing.*;
 
 public class XL extends JFrame implements Printable {
-    private static final int ROWS = 10, COLUMNS = 8;
+    private static final int ROWS = 20, COLUMNS = 20;
     private XLCounter counter;
     private StatusLabel statusLabel = new StatusLabel();
     private XLList xlList;
     private Sheet sheet;
+    private CurrentSlot currentSlot;
 
     public XL(XL oldXL) {
         this(oldXL.xlList, oldXL.counter);
@@ -30,7 +31,7 @@ public class XL extends JFrame implements Printable {
         xlList.add(this);
         counter.increment();
 
-        CurrentSlot currentSlot = new CurrentSlot("A1");
+        currentSlot = new CurrentSlot("A1");
         sheet = new Sheet();
         JPanel statusPanel = new StatusPanel(statusLabel, currentSlot);
         JPanel sheetPanel = new SheetPanel(ROWS, COLUMNS, currentSlot, sheet);
@@ -46,6 +47,9 @@ public class XL extends JFrame implements Printable {
     }
     public Sheet getSheet(){
         return sheet;
+    }
+    public CurrentSlot getCurrentSlot() {
+        return currentSlot;
     }
 
     public int print(Graphics g, PageFormat pageFormat, int page) {

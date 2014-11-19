@@ -2,6 +2,8 @@ package gui.menu;
 
 import gui.StatusLabel;
 import gui.XL;
+import io.XLPrintStream;
+
 import java.io.FileNotFoundException;
 import javax.swing.JFileChooser;
 
@@ -11,7 +13,9 @@ class SaveMenuItem extends OpenMenuItem {
     }
 
     protected void action(String path) throws FileNotFoundException {
-        // TODO
+        XLPrintStream ps = new XLPrintStream(path);
+        ps.save(xl.getSheet().getSlots().entrySet());
+        statusLabel.setText("Successfully saved!");
     }
 
     protected int openDialog(JFileChooser fileChooser) {

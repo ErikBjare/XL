@@ -48,7 +48,7 @@ public class ExprParser {
      * @return an <code>Expr</code> representation of the string.
      * @exception IOException
      *                if the <code>reader</code> does not deliver data.
-     * @exception ExprParserException
+     * @exception util.XLException
      *                if the reader input violates the grammar.
      */
     public Expr build(Reader reader) throws IOException {
@@ -114,7 +114,7 @@ public class ExprParser {
             return new Num(x);
         case StreamTokenizer.TT_WORD:
             String address = tokenizer.sval.toUpperCase();
-            if (!Pattern.matches("[A-Z][0-9]+", address))
+            if (!Pattern.matches("[A-Z]+[0-9]+", address))
                 throw new XLException("illegal address: " + address);
             token = tokenizer.nextToken();
             return new Variable(address);

@@ -9,7 +9,7 @@ public class SlotLabel extends ColoredLabel {
     private SlotLabels slotlabels;
 	
     public SlotLabel(String address, SlotLabels sl) {
-        super("                    ", Color.WHITE, RIGHT);
+        super("                ", Color.WHITE, RIGHT);
         this.address = address;
         this.slotlabels = sl;
         addMouseListener(new MouseA());

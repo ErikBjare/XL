@@ -23,10 +23,6 @@ public abstract class Slot extends Observable implements Observer {
     }
 
 
-    public void change() {
-        // TODO: Do this every time it is changed
-        //this.sheet.clear(this);
-    }
 
     @Override
     public void update(Observable observable, Object o) {

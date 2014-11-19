@@ -20,13 +20,11 @@ class LoadMenuItem extends OpenMenuItem {
         sheet.clearAll();
 
         try {
-
             XLBufferedReader xlBufferedReader = new XLBufferedReader(path);
             xlBufferedReader.load(sheet);
             sheet.externallyChanged();
-
+            xl.getCurrentSlot().setAddress("A1");
         } catch (XLException e) {
-            //TODO add to status panel
             statusLabel.setText("Error loading file: " + e.getMessage());
             sheet.clearAll();
         }

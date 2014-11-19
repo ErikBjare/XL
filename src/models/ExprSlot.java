@@ -47,18 +47,11 @@ public class ExprSlot extends Slot {
 			} else {
 				slot.addObserver(this);
 			}
-		};
+		}
 	}
 	
 	public void stopObserving() {
 		for(String var : variables()) {
-			sheet.get(var).deleteObserver(this);
-		};
-	}
-
-	@Override
-	public void change() {
-		for (String var : variables()) {
 			sheet.get(var).deleteObserver(this);
 		}
 	}

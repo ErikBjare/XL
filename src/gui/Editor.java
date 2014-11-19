@@ -19,12 +19,10 @@ import javax.swing.*;
 public class Editor extends JTextField implements Observer {
     private CurrentSlot currentSlot;
     private Sheet sheet;
-    private StatusLabel statusLabel;
 
     public Editor(final Sheet sheet, final CurrentSlot currentSlot, final StatusLabel statusLabel) {
         this.currentSlot = currentSlot;
         this.sheet = sheet;
-        this.statusLabel = statusLabel;
         currentSlot.addObserver(this);
 
         setBackground(Color.WHITE);
@@ -36,8 +34,6 @@ public class Editor extends JTextField implements Observer {
                 String text = getText();
                 if (text.length() > 0 && text.charAt(0) != '#') {
                     // If Expression
-                    // TODO: Create a exprslot
-
                     Slot oldslot = sheet.get(currentSlot.getAddress());
 
                     try {
@@ -45,32 +41,28 @@ public class Editor extends JTextField implements Observer {
                         slot = new ExprSlot(sheet, currentSlot.getAddress(), expr);
                         sheet.put(currentSlot.getAddress(), slot);
                     } catch (IOException err) {
-                        // TODO: Do something with error
                         statusLabel.setText("Invalid Expression.");
                         return;
                     } catch (XLException err) {
-                        try{
+                        try {
                             sheet.put(currentSlot.getAddress(), oldslot);
-                        }catch (NullPointerException f){
+                        } catch (NullPointerException f) {
                             statusLabel.setText("An empty slot may not be referenced to.");
-                        }catch (XLException f){
+                        } catch (XLException f) {
                             statusLabel.setText(f.getMessage());
-                        } statusLabel.setText(err.getMessage());
-
-
-                    }catch (NullPointerException f){
+                        }
+                        statusLabel.setText(err.getMessage());
+                    } catch (NullPointerException f) {
                         statusLabel.setText("An empty slot may not be referenced to.");
                     }
-                } else if (text.length() > 1 && text.charAt(0) == '#') {
+                } else if (text.length() > 0 && text.charAt(0) == '#') {
                     // If Comment
                     slot = new CommentSlot(sheet, currentSlot.getAddress(), text.substring(1, text.length()));
-//
-
                     sheet.put(currentSlot.getAddress(), slot);
                 } else {
-                    try{
+                    try {
                         sheet.clear(currentSlot.getAddress());
-                    }catch (XLException f){
+                    } catch (XLException f) {
                         statusLabel.setText(f.getMessage());
 
                     }
@@ -84,7 +76,7 @@ public class Editor extends JTextField implements Observer {
         Slot slot = sheet.get(currentSlot.getAddress());
         if (slot != null) {
 
-                setText(slot.getText());
+            setText(slot.getText());
 
         } else {
 //            System.out.println("Empty Slot ");

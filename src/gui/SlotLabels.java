@@ -6,8 +6,9 @@ import models.Slot;
 
 import java.awt.Color;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.SwingConstants;
-import javax.xml.stream.events.Comment;
 
 public class SlotLabels extends GridPanel implements Observer {
     private List<SlotLabel> labelList;
@@ -19,24 +20,32 @@ public class SlotLabels extends GridPanel implements Observer {
     public SlotLabels(int rows, int cols, CurrentSlot currentSlot, Sheet sheet) {
         super(rows + 1, cols);
 
-        // TODO: Remove this by solving ref in update()?
         this.cols = cols;
         this.sheet = sheet;
 
+        List<String> colStrings = new ArrayList<String>();
+
         labelList = new ArrayList<SlotLabel>(rows * cols);
-        for (char ch = 'A'; ch < 'A' + cols; ch++) {
-            add(new ColoredLabel(Character.toString(ch), Color.LIGHT_GRAY,
+        for (int i=0; i<cols; i++) {
+            char c = (char)('A' + i % ('Z'-'A'+1));
+            String s = String.valueOf(c);
+            int preidx = i/('Z'-'A'+1);
+            if(preidx > 0) {
+                System.out.println(preidx-1);
+                s = (char)('A'+preidx-1) + s;
+            }
+            colStrings.add(s);
+            add(new ColoredLabel(s, Color.LIGHT_GRAY,
                     SwingConstants.CENTER));
         }
         for (int row = 1; row <= rows; row++) {
-            for (char ch = 'A'; ch < 'A' + cols; ch++) {
-                SlotLabel label = new SlotLabel("" + ch + row, this);
+            for (String col : colStrings) {
+                SlotLabel label = new SlotLabel("" + col + row, this);
                 add(label);
                 labelList.add(label);
             }
         }
 
-        // TODO: Set current slot upon start
         this.currentSlot = currentSlot;
         currentSlot.addObserver(this);
         sheet.addObserver(this);
@@ -44,11 +53,23 @@ public class SlotLabels extends GridPanel implements Observer {
     }
 
     private int addrToIdx(String addr) {
-        return (Integer.parseInt(addr.substring(1)) - 1) * cols + (addr.charAt(0) - 'A');
+        Pattern colpattern = Pattern.compile("[A-Z]+");
+        Matcher colmatcher = colpattern.matcher(addr);
+        colmatcher.find();
+        int end = colmatcher.end();
+
+        int row = Integer.parseInt(addr.substring(end)) - 1;
+        String colstr = addr.substring(0, end);
+        int col = 0;
+        for(int i=0; i<colstr.length(); i++) {
+            col += (colstr.charAt(i)-'A') + i*('Z'-'A'+1);
+        }
+
+        return row * cols + col;
     }
 
     public void setBG(String addr) {
-        // TODO: Only supports A1-Z9
+        // NOTE: Only supports [A-Z][1-9][0-9]*
         labelList.get(lastIdx).setBackground(Color.WHITE);
         int i = addrToIdx(addr);
 //        System.out.println("Setting i=" + i + " to yellow bg");
@@ -62,7 +83,7 @@ public class SlotLabels extends GridPanel implements Observer {
 
     @Override
     public void update(Observable observable, Object o) {
-        // TODO: Observe current slot and set background upon update
+
         if (observable == currentSlot) {
             setBG(currentSlot.getAddress());
         } else if (observable == sheet) {
@@ -74,8 +95,7 @@ public class SlotLabels extends GridPanel implements Observer {
                 System.out.println(e.getKey()+ " gives value " +value);
                 if(value!= null){
                 SlotLabel s = labelList.get(addrToIdx(value.getAddress()));
-                //TODO: set text as toString of the slot or value?
-                if (e.getValue() instanceof CommentSlot) {
+                             if (e.getValue() instanceof CommentSlot) {
                     s.setText(e.getValue().toString());
                 } else {
                     try{
@@ -84,7 +104,7 @@ public class SlotLabels extends GridPanel implements Observer {
                         System.out.println("Referring to a slot that contains nothing");
                         s.setText(e.getValue().toString());
                     }
-                };
+                }
             }
         }}
     }
